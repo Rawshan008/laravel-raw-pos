@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Livewire\Items;
+namespace App\Livewire\Inventory;
 
-use App\Models\Item;
-use Filament\Actions\Action;
 use Livewire\Component;
+use App\Models\Inventory;
+use Filament\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Filament\Actions\BulkActionGroup;
@@ -15,11 +15,9 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Tables\Columns\CheckboxColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
-class ListItems extends Component implements HasActions, HasSchemas, HasTable
+class ListInventory extends Component implements HasActions, HasSchemas, HasTable
 {
 	use InteractsWithActions;
 	use InteractsWithTable;
@@ -28,40 +26,28 @@ class ListItems extends Component implements HasActions, HasSchemas, HasTable
 	public function table(Table $table): Table
 	{
 		return $table
-			->query(fn(): Builder => Item::query())
+			->query(fn(): Builder => Inventory::query())
 			->columns([
-				ImageColumn::make('image')
-					->circular(),
-				TextColumn::make('name')
+				TextColumn::make('item.name')
 					->searchable(),
-				TextColumn::make('sku')
-					->searchable(),
-				TextColumn::make('price')
-					->searchable()
-					->prefix('$'),
-				TextColumn::make('status')
-					->badge()
-					->color(fn(string $state): string => match ($state) {
-						'active' => 'success',
-						'inactive' => 'danger',
-					}),
+				TextColumn::make('quantity')
 			])
 			->filters([
-				// 
+				//
 			])
 			->headerActions([
 				Action::make('create')
-					->label('Create Item')
-					->url(fn(): string => route('items.create'))
+					->label('Create Inventory')
+					->url(fn(): string => route('inventory.create'))
 			])
 			->recordActions([
 				Action::make('edit')
-					->url(fn(Item $record): string => route('items.edit', $record)),
+					->url(fn(Inventory $record): string => route('inventory.edit', $record)),
 
 				Action::make('delete')
 					->requiresConfirmation()
-					->action(fn(Item $record) => $record->delete())
-					->successNotificationTitle('Deleted Item'),
+					->action(fn(Inventory $record) => $record->delete())
+					->successNotificationTitle('Deleted Inventory Successfully!'),
 			])
 			->toolbarActions([
 				BulkActionGroup::make([
@@ -72,6 +58,6 @@ class ListItems extends Component implements HasActions, HasSchemas, HasTable
 
 	public function render(): View
 	{
-		return view('livewire.items.list-items');
+		return view('livewire.inventory.list-inventory');
 	}
 }

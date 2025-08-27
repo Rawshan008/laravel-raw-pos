@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Livewire\PaymentMethod;
+namespace App\Livewire\Inventory;
 
 use Livewire\Component;
+use App\Models\Inventory;
 use Filament\Schemas\Schema;
-use App\Models\PaymentMethod;
 use Illuminate\Contracts\View\View;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
-class CreatePaymentMethod extends Component implements HasActions, HasSchemas
+class CreateInventory extends Component implements HasActions, HasSchemas
 {
 	use InteractsWithActions;
 	use InteractsWithSchemas;
@@ -32,38 +32,42 @@ class CreatePaymentMethod extends Component implements HasActions, HasSchemas
 		return $schema
 			->components([
 				Section::make()
-					->label('Create Payment Method')
+					->label('Create Inventory')
 					->schema([
-						TextInput::make('name')
-							->label('Payment Method Name')
+						Select::make('item_id')
+							->relationship('item', 'name')
+							->searchable()
+							->preload()
 							->unique()
-							->required(),
-						Textarea::make('description')
-					])
+							->native(false),
+						TextInput::make('quantity')
+							->numeric()
+							->placeholder('10.10')
+					]),
 			])
 			->statePath('data')
-			->model(PaymentMethod::class);
+			->model(Inventory::class);
 	}
 
 	public function create(): void
 	{
 		$data = $this->form->getState();
 
-		$record = PaymentMethod::create($data);
+		$record = Inventory::create($data);
 
 		$this->form->model($record)->saveRelationships();
 
 		Notification::make()
 			->success()
-			->title('Create Payment!')
-			->body('Payment method create Successfully')
+			->title('Inventory Created!')
+			->body('Inventory Create Successfully')
 			->send();
 
-		$this->redirect(route('paymentmethods.index'), navigate: true);
+		$this->redirect(route('inventory.index'), navigate: true);
 	}
 
 	public function render(): View
 	{
-		return view('livewire.payment-method.create-payment-method');
+		return view('livewire.inventory.create-inventory');
 	}
 }

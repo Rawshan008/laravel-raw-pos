@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Livewire\Customer;
+namespace App\Livewire\Sale;
 
-use Livewire\Component;
-use App\Models\Customer;
+use App\Models\Sale;
 use Filament\Actions\Action;
+use Livewire\Component;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Filament\Actions\BulkActionGroup;
@@ -17,7 +17,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Tables\Columns\TextColumn;
 
-class ListCustomer extends Component implements HasActions, HasSchemas, HasTable
+class ListSale extends Component implements HasActions, HasSchemas, HasTable
 {
 	use InteractsWithActions;
 	use InteractsWithTable;
@@ -26,34 +26,36 @@ class ListCustomer extends Component implements HasActions, HasSchemas, HasTable
 	public function table(Table $table): Table
 	{
 		return $table
-			->query(fn(): Builder => Customer::query())
+			->query(fn(): Builder => Sale::query())
 			->columns([
-				TextColumn::make('name')
-					->label('Name')
+				TextColumn::make('customer.name')
 					->searchable(),
-				TextColumn::make('email')
-					->label('Email')
-					->searchable(),
-				TextColumn::make('phone')
-					->label('Phone Number')
-					->searchable()
+				TextColumn::make('salesItem.item.name')
+					->label('Sold Item')
+					->bulleted()
+					->limitList(2)
+					->expandableLimitedList(),
+				TextColumn::make('total')
+					->label('Total')
+					->prefix("$ "),
+				TextColumn::make('discount')
+					->prefix("$ "),
+				TextColumn::make('paid_amount')
+					->label('Total Paid')
+					->prefix("$ "),
+				TextColumn::make('payment_method.name')->searchable(),
 			])
 			->filters([
 				//
 			])
 			->headerActions([
-				Action::make('create')
-					->label('Create Customer')
-					->url(fn(): string => route('customers.create'))
+				//
 			])
 			->recordActions([
-				Action::make('edit')
-					->url(fn(Customer $record): string => route('customers.edit', $record)),
-
 				Action::make('delete')
 					->requiresConfirmation()
-					->action(fn(Customer $record) => $record->delete())
-					->successNotificationTitle('Deleted Customer'),
+					->action(fn(Sale $record) => $record->delete())
+					->successNotificationTitle('Deleted Sale Successfylly'),
 			])
 			->toolbarActions([
 				BulkActionGroup::make([
@@ -64,6 +66,6 @@ class ListCustomer extends Component implements HasActions, HasSchemas, HasTable
 
 	public function render(): View
 	{
-		return view('livewire.customer.list-customer');
+		return view('livewire.sale.list-sale');
 	}
 }

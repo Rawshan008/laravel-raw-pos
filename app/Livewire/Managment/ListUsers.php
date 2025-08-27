@@ -47,7 +47,6 @@ class ListUsers extends Component implements HasActions, HasSchemas, HasTable
                     ->requiresConfirmation()
                     ->action(fn(User $record) => $record->delete())
                     ->successNotificationTitle('Deleted users'),
-                ViewAction::make(),
                 Action::make('edit')
                     ->url(fn(User $record): string => route('users.edit', $record))
             ])

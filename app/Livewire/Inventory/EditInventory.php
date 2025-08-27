@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Livewire\PaymentMethod;
+namespace App\Livewire\Inventory;
 
 use Livewire\Component;
+use App\Models\Inventory;
 use Filament\Schemas\Schema;
-use App\Models\PaymentMethod;
 use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
-class EditPaymentMethod extends Component implements HasActions, HasSchemas
+class EditInventory extends Component implements HasActions, HasSchemas
 {
 	use InteractsWithActions;
 	use InteractsWithSchemas;
 
-	public PaymentMethod $record;
+	public Inventory $record;
 
 	public ?array $data = [];
 
@@ -34,14 +34,18 @@ class EditPaymentMethod extends Component implements HasActions, HasSchemas
 		return $schema
 			->components([
 				Section::make()
-					->label('Create Payment Method')
+					->label('Create Inventory')
 					->schema([
-						TextInput::make('name')
-							->label('Payment Method Name')
-							->unique()
-							->required(),
-						Textarea::make('description')
-					])
+						Select::make('item_id')
+							->relationship('item', 'name')
+							->searchable()
+							->preload()
+							->unique(ignoreRecord: true)
+							->native(false),
+						TextInput::make('quantity')
+							->numeric()
+							->placeholder('10.10')
+					]),
 			])
 			->statePath('data')
 			->model($this->record);
@@ -55,15 +59,15 @@ class EditPaymentMethod extends Component implements HasActions, HasSchemas
 
 		Notification::make()
 			->success()
-			->title('Update Payment!')
-			->body('Payment method Update Successfully')
+			->title('Inventory Update!')
+			->body('Inventory Update Successfully!')
 			->send();
 
-		$this->redirect(route('paymentmethods.index'), navigate: true);
+		$this->redirect(route('inventory.index'), navigate: true);
 	}
 
 	public function render(): View
 	{
-		return view('livewire.payment-method.edit-payment-method');
+		return view('livewire.inventory.edit-inventory');
 	}
 }
