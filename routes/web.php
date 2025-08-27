@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Customer\CreateCustomer;
+use App\Livewire\Customer\EditCustomer;
+use App\Livewire\Customer\ListCustomer;
 use App\Livewire\Items\CreateItem;
 use App\Livewire\Items\EditItem;
 use App\Livewire\Items\ListItems as ItemsListItems;
@@ -36,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/manage-items', ItemsListItems::class)->name('items.index');
     Route::get('/create-items', CreateItem::class)->name('items.create');
     Route::get('/edit-items/{record}', EditItem::class)->name('items.edit');
+
+    // Customer 
+    Route::get('/manage-customer', ListCustomer::class)->name('customers.index');
+    Route::get('/create-customer', CreateCustomer::class)->name('customers.create');
+    Route::get('/edit-customer/{record}', EditCustomer::class)->name('customers.edit');
 });
 
 require __DIR__ . '/auth.php';

@@ -1,28 +1,25 @@
 <?php
 
-namespace App\Livewire\Items;
+namespace App\Livewire\Customer;
 
-use components;
-use App\Models\Item;
 use Livewire\Component;
+use App\Models\Customer;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 
-class EditItem extends Component implements HasActions, HasSchemas
+class EditCustomer extends Component implements HasActions, HasSchemas
 {
 	use InteractsWithActions;
 	use InteractsWithSchemas;
 
-	public Item $record;
+	public Customer $record;
 
 	public ?array $data = [];
 
@@ -36,31 +33,23 @@ class EditItem extends Component implements HasActions, HasSchemas
 		return $schema
 			->components([
 				Section::make()
-					->label('Update Item')
+					->label('Create Customer')
 					->schema([
 						TextInput::make('name')
-							->placeholder('Item Name')
+							->label('Customer Name')
+							->placeholder('Jhon Rudy')
 							->required(),
-						TextInput::make('sku')
-							->placeholder('SKU')
+						TextInput::make('email')
+							->label('Customer Email')
+							->placeholder('email@email.com')
+							->unique(ignoreRecord: true)
+							->email(),
+						TextInput::make('phone')
+							->label('Custome Phone Numer')
+							->placeholder('087656577')
 							->required()
-							->unique(ignoreRecord: true),
-						TextInput::make('price')
-							->placeholder('10.00')
-							->required()
-							->prefix('$')
-							->numeric(),
-						ToggleButtons::make('status')
-							->label('Is this item active?')
-							->options([
-								'active' => 'Active',
-								'inactive' => 'Inactive'
-							])
-							->default('active')
-							->grouped(),
-						FileUpload::make('image')
-							->image()
-							->directory('items')
+							->unique(ignoreRecord: true)
+							->tel()
 					])
 			])
 			->statePath('data')
@@ -75,15 +64,15 @@ class EditItem extends Component implements HasActions, HasSchemas
 
 		Notification::make()
 			->success()
-			->title('Item Updated!')
-			->body('Item Update Successfully')
+			->title('Update Customer!')
+			->body('Update Customer Successfully')
 			->send();
 
-		$this->redirect(route('items.index'), navigate: true);
+		$this->redirect(route('customers.index'), navigate: true);
 	}
 
 	public function render(): View
 	{
-		return view('livewire.items.edit-item');
+		return view('livewire.customer.edit-customer');
 	}
 }
